@@ -1,6 +1,7 @@
 export enum SocketEvents {
   // Client to Server events
   NEW_MESSAGE_TO_SERVER = 'newMessageToServer',
+  CLIENT_CONNECT = 'clientConnect',
 
   // Server to Client events
   NEW_MESSAGE_TO_CLIENTS = 'newMessageToClients',
