@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { SocketEvents } from '../socket-events.enum.ts';
+import namespaces from './data/namespaces.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,4 +33,6 @@ io.on('connection', (socket) => {
   socket.on(SocketEvents.CLIENT_CONNECT, (data) => {
     console.log(socket.id, 'has connected');
   });
+
+  socket.emit('nsList', namespaces);
 });
