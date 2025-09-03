@@ -8,11 +8,14 @@ import namespaces from './data/namespaces.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log(__dirname);
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+
+namespaces.forEach((namespace) => {
+  console.log(namespace);
+});
 
 app.use(
   express.static(path.join(__dirname, 'public'), {
@@ -32,7 +35,12 @@ io.on('connection', (socket) => {
   socket.emit('welcome', 'Welcome to the server');
   socket.on(SocketEvents.CLIENT_CONNECT, (data) => {
     console.log(socket.id, 'has connected');
+    socket.emit('nsList', namespaces);
   });
+});
 
-  socket.emit('nsList', namespaces);
+namespaces.forEach((namespace) => {
+  io.of(namespace.endpoint).on('connection', (socket) => {
+    console.log(`${socket.id} has connected to ${namespace.endpoint}`);
+  });
 });

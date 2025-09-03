@@ -2,6 +2,11 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { SocketEvents } from '../socket-events.enum.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app);
@@ -13,10 +18,16 @@ httpServer.listen(8001, () => {
   console.log('Server running on port 8001');
 });
 
-io.on('connection', (socket) => {
+io.of('/').on('connection', (socket) => {
   socket.join('chat');
+  socket.join('adminChat');
 
-  io.to('chat').emit(SocketEvents.WELCOME_TO_CHAT_ROOM, {});
+  // io.of('/').to('chat').emit(SocketEvents.WELCOME_TO_CHAT_ROOM, {});
+  // io.of('/')
+  //   .to('chat')
+  //   .to('chat2')
+  //   .to('adminChat')
+  //   .emit(SocketEvents.WELCOME_TO_CHAT_ROOM, {});
   io.to(socket.id).emit(SocketEvents.SOCKET_CHECK, socket.id);
   io.of('/admin').emit(SocketEvents.USER_JOINED_MAIN_NS, '');
 
