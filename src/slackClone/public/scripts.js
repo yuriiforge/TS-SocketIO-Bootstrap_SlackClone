@@ -4,6 +4,22 @@ const password = 'X';
 // Always join the main namespace
 const socket = io('http://localhost:9000');
 
+const namespaceSockets = [];
+const listeners = {
+  nsChange: [],
+};
+
+const addListeners = (nsId) => {
+  // namespaceSockets[ns.id] = thisNs;
+  if (!listeners.nsChange[nsId]) {
+    namespaceSockets[nsId].on('nsChange', (data) => {
+      console.log('Namespace Changed!');
+      console.log(data);
+    });
+    listeners.nsChange[nsId] = true;
+  }
+};
+
 socket.on('connect', () => {
   console.log('Connected!');
   socket.emit('clientConnect');
@@ -15,8 +31,14 @@ socket.on('nsList', (nsData) => {
   nameSpacesDiv.innerHTML = '';
   nsData.forEach((ns) => {
     nameSpacesDiv.innerHTML += `<div class="namespace" ns="${ns.endpoint}"><img src="${ns.image}" /></div>`;
-    // join this namespace with io()
-    io(`http://localhost:9000${ns.endpoint}`);
+
+    // let thisNs = namespaceSockets[ns.id];
+
+    if (!namespaceSockets[ns.id]) {
+      // join this namespace with io()
+      namespaceSockets[ns.id] = io(`http://localhost:9000${ns.endpoint}`);
+    }
+    addListeners(ns.id);
   });
 
   Array.from(document.getElementsByClassName('namespace')).forEach(
@@ -27,5 +49,5 @@ socket.on('nsList', (nsData) => {
     }
   );
 
-  joinNs(document.getElementsByClassName('namespace')[0].nsData);
+  joinNs(document.getElementsByClassName('namespace')[0], nsData);
 });
