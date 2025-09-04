@@ -14,10 +14,6 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-namespaces.forEach((namespace) => {
-  console.log(namespace);
-});
-
 app.use(
   express.static(path.join(__dirname, 'public'), {
     setHeaders: (res, path) => {
@@ -53,7 +49,13 @@ io.on('connection', (socket) => {
 namespaces.forEach((namespace) => {
   io.of(namespace.endpoint).on('connection', (socket) => {
     // console.log(`${socket.id} has connected to ${namespace.endpoint}`);
-    socket.on('joinRoom', async (roomTitle, ackCallback) => {
+    socket.on('joinRoom', async (roomObj, ackCallback) => {
+      const thisNs = namespaces[roomObj.namespaceId];
+      const thisRoomObj = thisNs?.rooms.find(
+        (room) => room.roomTitle === roomObj.roomTitle
+      );
+      const thisRoomsHistory = thisRoomObj?.history;
+
       const rooms = socket.rooms;
 
       let i = 0;
@@ -64,18 +66,45 @@ namespaces.forEach((namespace) => {
         i++;
       });
 
-      socket.join(roomTitle);
+      socket.join(roomObj.roomTitle);
 
       // fetch the number of sockets in this room
       const sockets = await io
         .of(namespace.endpoint)
-        .in(roomTitle)
+        .in(roomObj.roomTitle)
         .fetchSockets();
       const socketCount = sockets.length;
 
       ackCallback({
         numUsers: socketCount,
+        thisRoomsHistory,
       });
+    });
+
+    socket.on('newMessageToRoom', (messageObj) => {
+      console.log(messageObj);
+      //broadcast this to all the connected clients... this room only!
+      const rooms = socket.rooms;
+      const currentRoom = [...rooms][1];
+
+      // send out this messageObj
+      io.of(namespace.endpoint)
+        .in(currentRoom!)
+        .emit('messageToRoom', messageObj);
+
+      const thisNs = namespaces[messageObj.selectedNsId];
+      const thisRoom = thisNs?.rooms.find(
+        (room) => room.roomTitle === currentRoom
+      );
+
+      console.log('Current room:', currentRoom);
+      console.log(
+        'All rooms in namespace:',
+        thisNs?.rooms.map((r) => r.roomTitle)
+      );
+      console.log('thisRoom:', thisRoom);
+
+      thisRoom?.addMessage(messageObj);
     });
   });
 });

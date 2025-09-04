@@ -19,6 +19,7 @@ class Room {
   }
 
   addMessage(message: any) {
+    console.log('message to be added', message);
     this.history.push(message);
   }
 

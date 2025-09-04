@@ -7,8 +7,26 @@ const socket = io('http://localhost:9000');
 const namespaceSockets = [];
 const listeners = {
   nsChange: [],
+  messageToRoom: [],
 };
 
+let selectedNsId = 0;
+
+document.querySelector('#message-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newMessage = document.querySelector('#user-message').value;
+  console.log(newMessage, selectedNsId);
+
+  namespaceSockets[selectedNsId].emit('newMessageToRoom', {
+    newMessage,
+    date: Date.now(),
+    avatar: '',
+    username,
+    selectedNsId,
+  });
+});
+
+// addListeners job is to manage all listeners added to all namespaces
 const addListeners = (nsId) => {
   // namespaceSockets[ns.id] = thisNs;
   if (!listeners.nsChange[nsId]) {
@@ -17,6 +35,15 @@ const addListeners = (nsId) => {
       console.log(data);
     });
     listeners.nsChange[nsId] = true;
+  }
+
+  if (!listeners.messageToRoom[nsId]) {
+    namespaceSockets[nsId].on('messageToRoom', (messageObj) => {
+      console.log(messageObj);
+      document.querySelector('#messages').innerHTML +=
+        buildMessageHtml(messageObj);
+    });
+    listeners.messageToRoom[nsId] = true;
   }
 };
 
