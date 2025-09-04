@@ -1,8 +1,10 @@
 const username = 'Yurii';
 const password = 'X';
 
+const BACKEND_URL = 'https://ts-socketio-bootstrap-slackclone.onrender.com';
+
 // Always join the main namespace
-const socket = io('http://localhost:9000');
+const socket = io(BACKEND_URL);
 
 const namespaceSockets = [];
 const listeners = {
@@ -63,7 +65,7 @@ socket.on('nsList', (nsData) => {
 
     if (!namespaceSockets[ns.id]) {
       // join this namespace with io()
-      namespaceSockets[ns.id] = io(`http://localhost:9000${ns.endpoint}`);
+      namespaceSockets[ns.id] = io(`${BACKEND_URL}${ns.endpoint}`);
     }
     addListeners(ns.id);
   });
