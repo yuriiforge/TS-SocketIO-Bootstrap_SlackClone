@@ -3,9 +3,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { SocketEvents } from '../socket-events.enum.ts';
-import namespaces from './data/namespaces.ts';
-import Room from './classes/Room.ts';
+import { SocketEvents } from '../socket-events.enum.js';
+import namespaces from './data/namespaces.js';
+import Room from './classes/Room.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

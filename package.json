@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "build": "tsc && cp -r src/public dist/slackClone/public",
+    "start": "node dist/slackClone/slack.js",
     "dev": "nodemon --exec tsx ./src/slackClone/slack.ts"
   },
   "keywords": [],

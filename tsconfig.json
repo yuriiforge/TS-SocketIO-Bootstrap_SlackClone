@@ -6,7 +6,7 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
-      "*": ["*"]
+      "slackClone/*": ["slackClone/*"]
     },
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -42,8 +42,8 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "allowImportingTsExtensions": false,
+    "noEmit": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

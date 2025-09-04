@@ -1,5 +1,5 @@
-import NameSpace from 'slackClone/classes/Namespace.ts';
-import Room from 'slackClone/classes/Room.ts';
+import NameSpace from '../classes/Namespace.js';
+import Room from '../classes/Room.js';
 
 const wikiNs = new NameSpace(0, 'Wikipedia', '/images/wiki.jpg', '/wiki');
 const mozNs = new NameSpace(1, 'Mozilla', '/images/mozilla.jpg', '/mozilla');
